@@ -2,7 +2,7 @@
   <div class="my-container">
     <!-- 已登录 -->
     <!-- 已登录头部 -->
-    <div class="header user-info">
+    <div v-if="user" class="header user-info">
       <div class="base-info">
         <div class="left">
           <van-image
@@ -38,7 +38,7 @@
     </div>
     <!-- /已登录头部 -->
     <!-- 未登录 -->
-    <div class="header not-login">
+    <div v-else class="header not-login">
       <div class="login-btn" @click="$router.push('/login')">
         <img class="mobile-img" src="~@/assets/mobile.png" alt="" />
         <span class="text">登录 / 注册</span>
@@ -46,30 +46,85 @@
     </div>
 
     <!-- 收藏&历史 -->
-    <van-grid class="grid-nav" :column-num="2" clickable>
+    <van-grid class="grid-nav mb-9" :column-num="2" clickable>
       <van-grid-item class="grid-item">
         <template #icon>
           <i class="iconfont icon-shoucang"></i>
         </template>
-        <template #text> 收藏</template>
+        <template #text> <span class="text">收藏</span></template>
       </van-grid-item>
       <van-grid-item class="grid-item">
         <template #icon>
           <i class="iconfont icon-lishi"></i>
         </template>
-        <template #text> 收藏</template>
+        <template #text> <span class="text">历史</span></template>
       </van-grid-item>
     </van-grid>
+    <!-- 消息通知 -->
+    <van-cell title="消息通知" is-link />
+    <!-- 小智同学 -->
+    <van-cell class="mb-9" title="小智同学" is-link />
+    <!--退出登录  -->
+    <van-cell
+      v-if="user"
+      class="logout-cell"
+      clickable
+      title="退出登录"
+      @click="onLogout"
+    />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+// 获取用户信息
+import { getUserInfo } from '@/api/user'
 export default {
   name: "My",
   data() {
     return {
-      userInfo: {},
+      userInfo: {
+        art_count: "10",
+        follow_count: "20",
+        fans_count: "30",
+        like_count: "13",
+      },
     };
+  },
+  computed: {
+    ...mapState(["user"]),
+  },
+  created(){
+    if(this.user){
+      this.loadUserInfo()
+    }
+  },
+  methods: {
+    onLogout() {
+      // 退出提示
+      // 在组件中需要使用 this.$dialog 来调用弹框组件
+      this.$dialog
+        .confirm({
+          title: "确认退出吗？",
+        })
+        .then(() => {
+          // on confirm
+          // 确认退出：清除登录状态（容器中的 user + 本地存储中的 user）
+          this.$store.commit("setUser", null);
+        })
+        .catch(() => {
+          // on cancel
+          console.log("取消执行这里");
+        });
+    },
+    async loadUserInfo () {
+      try {
+        const { data } = await getUserInfo()
+        this.userInfo = data.data
+      } catch (err) {
+        this.$toast('获取数据失败，请稍后重试')
+      }
+    }
   },
 };
 </script>

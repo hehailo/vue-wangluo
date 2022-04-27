@@ -9,8 +9,15 @@ import Vant from 'vant';
 import 'vant/lib/index.css';
 // 移动端适配
 import 'amfe-flexible'
-Vue.use(Vant);
 
+// vat 懒加载
+import { Lazyload } from 'vant';
+
+// 引入mock
+import "@/mock"
+
+Vue.use(Vant);
+Vue.use(Lazyload);
 Vue.config.productionTip = false
 
 new Vue({

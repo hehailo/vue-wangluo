@@ -3,6 +3,9 @@
  */
 
 import axios from "axios";
+import store from "@/store";
+
+
 const request = axios.create({
   baseURL: "http://toutiao.itheima.net/",
   // `transformResponse` 在传递给 then/catch 前，允许修改响应数据
@@ -20,11 +23,14 @@ const request = axios.create({
 // 添加请求拦截器
 request.interceptors.request.use(
   function (config) {
-    // 在发送请求之前做些什么
-    // let { loginToken } = store.state.user;
-    // if (loginToken && loginToken.token) {
-    //   config.headers.Authorization = `Bearer ${loginToken.token}`;
-    // }
+    // 已登录 设置请求头
+    console.log(store);
+    let { user } = store.state;
+    console.log(user);
+    if (user && user.token) {
+      config.headers.Authorization = `Bearer ${user.token}`;
+    }
+    // 一定要返回config
     return config;
   },
   function (error) {
