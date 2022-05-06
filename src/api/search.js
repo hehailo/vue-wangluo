@@ -20,3 +20,11 @@ export const getSearchResult = (params) => {
     params,
   });
 };
+
+
+export const getSearchHistories = () => {
+  return request({
+    method: "GET",
+    url: "/v1_0/search/histories"
+  });
+};

@@ -19,7 +19,7 @@
         有输入字符的时候展示，仅联想关键词
         触发搜索后展示 搜索结果
      -->
-   <!-- 搜索结果 -->
+    <!-- 搜索结果 -->
     <SearchResult v-if="isResultShow" :searchText="searchText"></SearchResult>
 
     <!-- 联想建议 -->
@@ -27,10 +27,19 @@
         搜索框输入内容的时候，请求加载联想建议的数据
         将请求得到的结果绑定到模板中
      -->
-    <SearchSuggestion v-else-if="searchText" :searchText="searchText"  @search="onSearch"></SearchSuggestion>
+    <SearchSuggestion
+      v-else-if="searchText"
+      :searchText="searchText"
+      @search="onSearch"
+    ></SearchSuggestion>
 
-     <!-- 搜索历史记录 -->
-    <SearchHistory v-else  @search="onSearch"></SearchHistory>
+    <!-- 搜索历史记录 -->
+    <SearchHistory
+      :searchHistories="searchHistories"
+      @clear-search-histories="searchHistories = []"
+      v-else
+      @search="onSearch"
+    ></SearchHistory>
   </div>
 </template>
 
@@ -38,18 +47,58 @@
 import SearchHistory from "./components/search-history.vue";
 import SearchResult from "./components/search-result.vue";
 import SearchSuggestion from "./components/search-suggestion.vue";
+import { setItem, getItem } from "@/utils/storage";
+import { getSearchHistories } from "@/api/search";
+import { mapState } from "vuex";
+
 export default {
   name: "Search",
   data() {
     return {
       searchText: "",
       isResultShow: false, // 控制搜索结果的展示
+      searchHistories: getItem("search-histories") || [],
     };
   },
+  created() {
+    this.loadSearcHitories();
+  },
+  watch:{
+    // 监视搜索记录的变化
+    searchHistories(){
+       setItem("search-histories", this.searchHistories);
+    }
+  },
+  computed: {
+    ...mapState(["user"]),
+  },
   methods: {
-    onSearch(val) {
-        this.searchText = val;
-        this.isResultShow = true;
+    async loadSearcHitories() {
+      const { data } = await getSearchHistories();
+      console.log("getSearchHistories", data);
+      if (this.user) {
+        this.searchHistories = data.keywords;
+      }
+    },
+    onSearch(keyword) {
+      this.searchText = keyword;
+
+      //去重
+      let index = this.searchHistories.indexOf(keyword);
+      if (index !== -1) {
+        this.searchHistories.splice(index, 1);
+      }
+
+      //最新的搜索结果放在最前面
+      this.searchHistories.unshift(keyword);
+
+      //已经登录 后台存储
+      //没有登录，存储到本地
+      if (!this.user) {
+        // setItem("search-histories", this.searchHistories);
+      }
+
+      this.isResultShow = true;
     },
     onCancel() {
       this.$router.back();

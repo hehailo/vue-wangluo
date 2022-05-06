@@ -24,9 +24,9 @@ const request = axios.create({
 request.interceptors.request.use(
   function (config) {
     // 已登录 设置请求头
-    console.log(store);
+    console.log("store",store);
     let { user } = store.state;
-    console.log(user);
+    console.log("user",user);
     if (user && user.token) {
       config.headers.Authorization = `Bearer ${user.token}`;
     }

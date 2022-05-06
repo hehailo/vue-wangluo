@@ -8,7 +8,9 @@
       error-text="加载失败，请点击重试"
       @load="onLoad"
     >
-      <van-cell v-for="(item, index) in list" :key="index" :title="item.title">
+      <van-cell v-for="(item, index) in list" :key="index" :title="item.title" @click="$router.push({name:'productDetail',params:{
+        productId:item.art_id
+      }})">
         <div class="detail" slot="label">
           <div class="author">
             <van-icon name="user-o" /> {{ item.aut_name }}
@@ -56,7 +58,7 @@ export default {
 
         // 2. 将数据添加到数组列表中
         const { results } = data;
-        console.log(results);
+        console.log("search-results",results);
         this.list.push(...results);
 
         // 3. 将本次加载中的 loading 关闭

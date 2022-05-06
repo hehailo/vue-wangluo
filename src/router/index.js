@@ -43,6 +43,21 @@ const routes = [
     path:"/search",
     name:"search",
     component:()=>import('@/views/search')
+  },
+  {
+    path:"/product",
+    name:"product",
+    component: () => import('@/views/product'),
+    children:[
+    ],
+    
+  },
+  {
+    path:"/detail/:productId",
+    name:"productDetail",
+    // 开启 Props 传参，说白了就是把路由参数映射到组件的 props 数据中
+    props:true,
+    component:()=>import('../views/productDetail')
   }
 
 ]
