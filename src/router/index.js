@@ -53,6 +53,14 @@ const routes = [
     
   },
   {
+    path:"/upload",
+    name:"upload",
+    component: () => import('@/views/FileUpload'),
+    children:[
+    ],
+  
+  },
+  {
     path:"/detail/:productId",
     name:"productDetail",
     // 开启 Props 传参，说白了就是把路由参数映射到组件的 props 数据中

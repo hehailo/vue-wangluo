@@ -17,7 +17,7 @@
     <!-- 轮播图 -->
     <van-swipe :autoplay="3000" class="swipe">
       <van-swipe-item v-for="(image, index) in images" :key="index">
-          <van-image :src="image"  lazy-load  fit="cover" class="imgShow" />
+        <van-image :src="image" lazy-load fit="cover" class="imgShow" />
       </van-swipe-item>
     </van-swipe>
     <!-- 宫格 -->
@@ -27,6 +27,7 @@
         :key="value"
         icon="photo-o"
         text="文字"
+        @click="toUpload"
       />
     </van-grid>
   </div>
@@ -42,6 +43,11 @@ export default {
         "https://img01.yzcdn.cn/vant/apple-2.jpg",
       ],
     };
+  },
+  methods: {
+    toUpload() {
+      this.$router.push("/upload")
+    },
   },
 };
 </script>
@@ -64,7 +70,7 @@ export default {
   .imgShow {
     width: 710px;
     height: 300px;
-    margin:  10px 20px;
+    margin: 10px 20px;
   }
 }
 </style>
